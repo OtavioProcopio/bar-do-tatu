@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/tatubar
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - tatubar-network
+
+  mysql:
+    image: mysql:8.0.29
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tatubar
+    ports:
+      - "3306:3306"
+    networks:
+      - tatubar-network
+
+networks:
+  tatubar-network:
+    driver: bridge
