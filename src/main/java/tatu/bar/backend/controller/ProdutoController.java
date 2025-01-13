@@ -14,45 +14,47 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import tatu.bar.backend.dto.ProdutoDTO;
 import tatu.bar.backend.entity.Produto;
 import tatu.bar.backend.service.ProdutoService;
 
 @RestController
-@RequestMapping("/produtos")
+@Tag(name = "Produtos", description = "Restful Api de Produtos")
+@RequestMapping("/api/v1/produtos")
 public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
 
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<Produto> criarProduto(@RequestBody ProdutoDTO produtoDTO) {
         Produto produto = produtoService.criarProduto(produtoDTO);
         return ResponseEntity.ok(produto);
     }
 
-    @GetMapping
+    @GetMapping("/listAll")
     public ResponseEntity<List<Produto>> listarProdutos() {
         return ResponseEntity.ok(produtoService.listarProdutos());
     }
 
-    @GetMapping("/buscar")
+    @GetMapping("/findByNameOrCategory")
     public ResponseEntity<List<Produto>> buscarPorNomeOuCategoria(@RequestParam(required = false) String nome,
                                                                    @RequestParam(required = false) String categoria) {
         return ResponseEntity.ok(produtoService.buscarPorNomeOuCategoria(nome, categoria));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/findById/{id}")
     public ResponseEntity<Produto> buscarProdutoPorId(@PathVariable Long id) {
         return ResponseEntity.ok(produtoService.buscarPorId(id));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/atualizar/{id}")
     public ResponseEntity<Produto> atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO) {
         return ResponseEntity.ok(produtoService.atualizarProduto(id, produtoDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
         produtoService.deletarProduto(id);
         return ResponseEntity.noContent().build();
