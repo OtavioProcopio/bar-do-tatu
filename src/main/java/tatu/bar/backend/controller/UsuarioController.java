@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import tatu.bar.backend.dto.RegisterRequestDTO;
 import tatu.bar.backend.dto.UsuarioDTO;
 import tatu.bar.backend.entity.Usuario;
 import tatu.bar.backend.service.UsuarioService;
 
 @RestController
 @Tag(name = "Usuarios", description = "Apis de Crud para Usuarios")
-@RequestMapping("/api/v1/usuarios")
+@RequestMapping("/usuarios")
 public class UsuarioController {
     
     @Autowired
@@ -29,8 +30,8 @@ public class UsuarioController {
 
     
     @PostMapping("/save")
-    public ResponseEntity<Usuario> criarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        Usuario usuario = usuarioService.criarUsuario(usuarioDTO);
+    public ResponseEntity<Usuario> criarUsuario(@RequestBody RegisterRequestDTO registerRequestDTO) {
+        Usuario usuario = usuarioService.criarUsuario(registerRequestDTO);
         return ResponseEntity.ok(usuario);
     }
 
@@ -45,12 +46,12 @@ public class UsuarioController {
     }
 
     @GetMapping("/findByName/{nome}")
-    public ResponseEntity<List<Usuario>> buscarUsuarioPorNome(@PathVariable String name) {
+    public ResponseEntity<Usuario> buscarUsuarioPorNome(@PathVariable String name) {
         return ResponseEntity.ok(usuarioService.buscarPorNome(name));
     }
 
     @GetMapping("/findByEmail/{email}")
-    public ResponseEntity<List<Usuario>> buscarUsuarioPorEmail(@PathVariable String email) {
+    public ResponseEntity<Usuario> buscarUsuarioPorEmail(@PathVariable String email) {
         return ResponseEntity.ok(usuarioService.buscarPorEmail(email));
     }
 

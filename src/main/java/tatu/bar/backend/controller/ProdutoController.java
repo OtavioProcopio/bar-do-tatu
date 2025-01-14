@@ -21,7 +21,7 @@ import tatu.bar.backend.service.ProdutoService;
 
 @RestController
 @Tag(name = "Produtos", description = "Restful Api de Produtos")
-@RequestMapping("/api/v1/produtos")
+@RequestMapping("/produtos")
 public class ProdutoController {
 
     @Autowired

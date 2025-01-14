@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import tatu.bar.backend.dto.RegisterRequestDTO;
 import tatu.bar.backend.dto.UsuarioDTO;
 import tatu.bar.backend.entity.Usuario;
 import tatu.bar.backend.repository.UsuarioRepository;
@@ -21,12 +22,12 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Usuario criarUsuario(UsuarioDTO userDTO) {
+    public Usuario criarUsuario(RegisterRequestDTO registerRequestDTO) {
 
         Usuario user = new Usuario();
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setName(registerRequestDTO.name());
+        user.setEmail(registerRequestDTO.email());
+        user.setPassword(passwordEncoder.encode(registerRequestDTO.password()));
         return usuarioRepository.save(user);
     }
 
@@ -34,13 +35,13 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public List<Usuario> buscarPorNome(String name) {
-        Optional<List<Usuario>> usuario = usuarioRepository.findByNameContainingIgnoreCase(name);
+    public Usuario buscarPorNome(String name) {
+        Optional<Usuario> usuario = usuarioRepository.findByName(name);
         return usuario.orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
     }
 
-    public List<Usuario> buscarPorEmail(String email){
-        Optional<List<Usuario>> usuario = usuarioRepository.findByEmailContainingIgnoreCase(email);
+    public Usuario buscarPorEmail(String email){
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
         return usuario.orElseThrow(()-> new RuntimeException("Usuario não encontrado"));
     }
 
@@ -62,9 +63,4 @@ public class UsuarioService {
 
         return usuarioRepository.save(usuario);
     }
-
-
-
-
-
 }
