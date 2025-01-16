@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProdutoDTO {
 
-    private String name;
+    private String nome;
 
     private String descricao;
 
@@ -20,5 +20,7 @@ public class ProdutoDTO {
     private double precoDeCusto;
 
     private double precoDeVenda;
+
+    private String caminhoImagem;
 
 }

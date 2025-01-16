@@ -4,6 +4,7 @@ package tatu.bar.backend.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ public class AuthController {
     private final TokenService tokenService;
     private final UsuarioService usuarioService;
 
+    @CrossOrigin(origins = "http://localhost:8081")
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO body){
         
@@ -44,7 +46,7 @@ public class AuthController {
     }
 
     
-
+    @CrossOrigin(origins = "http://localhost:8081")
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegisterRequestDTO body){
         try{

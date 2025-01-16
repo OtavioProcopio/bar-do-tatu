@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import tatu.bar.backend.dto.ProdutoDTO;
@@ -28,8 +28,11 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @PostMapping("/save")
-    public ResponseEntity<Produto> criarProduto(@RequestBody ProdutoDTO produtoDTO) {
-        Produto produto = produtoService.criarProduto(produtoDTO);
+    public ResponseEntity<Produto> criarProduto(
+            @RequestParam("produto") String produtoJson,
+            @RequestParam(value = "imagem", required = false) MultipartFile imagem) {
+        ProdutoDTO produtoDTO = produtoService.convertJsonToProdutoDTO(produtoJson);
+        Produto produto = produtoService.criarProdutoComImagem(produtoDTO, imagem);
         return ResponseEntity.ok(produto);
     }
 
@@ -39,8 +42,9 @@ public class ProdutoController {
     }
 
     @GetMapping("/findByNameOrCategory")
-    public ResponseEntity<List<Produto>> buscarPorNomeOuCategoria(@RequestParam(required = false) String nome,
-                                                                   @RequestParam(required = false) String categoria) {
+    public ResponseEntity<List<Produto>> buscarPorNomeOuCategoria(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String categoria) {
         return ResponseEntity.ok(produtoService.buscarPorNomeOuCategoria(nome, categoria));
     }
 
@@ -49,9 +53,14 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.buscarPorId(id));
     }
 
-    @PutMapping("/atualizar/{id}")
-    public ResponseEntity<Produto> atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO) {
-        return ResponseEntity.ok(produtoService.atualizarProduto(id, produtoDTO));
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Produto> atualizarProduto(
+            @PathVariable Long id,
+            @RequestParam("produto") String produtoJson,
+            @RequestParam(value = "imagem", required = false) MultipartFile imagem) {
+        ProdutoDTO produtoDTO = produtoService.convertJsonToProdutoDTO(produtoJson);
+        Produto produto = produtoService.atualizarProdutoComImagem(id, produtoDTO, imagem);
+        return ResponseEntity.ok(produto);
     }
 
     @DeleteMapping("/delete/{id}")

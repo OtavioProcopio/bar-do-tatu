@@ -20,31 +20,41 @@ import tatu.bar.backend.service.TokenService;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
-    @Autowired
-    TokenService tokenService;
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private TokenService tokenService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        var token = this.recoverToken(request);
-        var login = tokenService.validateToken(token);
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
 
-        if(login != null ){
-            Usuario usuario = usuarioRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User Not Found"));
+        String token = recoverToken(request);
+        String login = tokenService.validateToken(token);
+
+        if (login != null) {
+            Usuario usuario = usuarioRepository.findByEmail(login)
+                    .orElseThrow(() -> new RuntimeException("User Not Found"));
             var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             var authentication = new UsernamePasswordAuthenticationToken(usuario, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
+        // Segue para o próximo filtro na cadeia
         filterChain.doFilter(request, response);
     }
 
-    private String recoverToken(HttpServletRequest request){
-        var authHeader = request.getHeader("Authorization");
-        if(authHeader == null) return null;
+    private String recoverToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
         return authHeader.replace("Bearer ", "");
     }
-
 }
